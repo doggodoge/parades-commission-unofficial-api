@@ -1,3 +1,6 @@
 name = "parades-parser"
 main = "src/index.js"
 compatibility_date = "2023-05-13"
+kv_namespaces = [
+  { binding = "PARADE_DETAILS", id = "49b7ea66a95d48adba52b09ccb9c7289", preview_id = "8027d73e31be459eab491be030735e3f" },
+]
