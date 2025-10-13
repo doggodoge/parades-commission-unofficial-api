@@ -58,9 +58,29 @@ router.get(
     }),
 );
 
-router.get('/parades', async ({ query }) => {
+router.get('/parades', async ({ query }, env) => {
   const { location, start, end } = query;
-  let parades = await allParades();
+  
+  // 10 minutes TTL in seconds
+  const PARADES_TTL_SECONDS = 10 * 60;
+  const PARADES_CACHE_KEY = 'all_parades';
+  
+  // Check cache first
+  let parades;
+  const cachedParades = await env.PARADE_DETAILS.get(PARADES_CACHE_KEY);
+  if (cachedParades) {
+    parades = JSON.parse(cachedParades);
+  } else {
+    // Fetch fresh data and cache it
+    parades = await allParades();
+    await env.PARADE_DETAILS.put(
+      PARADES_CACHE_KEY, 
+      JSON.stringify(parades), 
+      { expirationTtl: PARADES_TTL_SECONDS }
+    );
+  }
+  
+  // Apply filters
   if (location) {
     parades = parades.filter(
       (p) => p.town.toLowerCase() === location.toLowerCase(),
