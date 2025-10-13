@@ -82,6 +82,8 @@ router.get('/parades_by_street_belfast/:street', async ({ params }, env) => {
     .filter((p) => p.town.toLowerCase() === 'belfast')
     .map((p) => p.detailsUrl);
 
+  const TTL_SECONDS = 14 * 24 * 60 * 60;
+
   const parsedParadeDetails = await Promise.all(
     paradeURLs.map(async (url) => {
       const kvEntry = await env.PARADE_DETAILS.get(url);
@@ -92,7 +94,9 @@ router.get('/parades_by_street_belfast/:street', async ({ params }, env) => {
         .then((res) => res.text())
         .then((html) => {
           const parsedParadeDetails = parseParadesDetailsHTML(html);
-          env.PARADE_DETAILS.put(url, JSON.stringify(parsedParadeDetails));
+          env.PARADE_DETAILS.put(url, JSON.stringify(parsedParadeDetails), {
+            expirationTtl: TTL_SECONDS,
+          });
           return parsedParadeDetails;
         });
     }),
