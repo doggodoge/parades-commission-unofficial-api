@@ -31,28 +31,32 @@ function levenshteinDistance(str1, str2) {
 }
 
 // Fuzzy match function that checks if street name is similar enough
-function fuzzyMatchStreet(searchTerm, streetText, threshold = 2) {
+function fuzzyMatchStreet(searchTerm, streetArray, threshold = 2) {
   const searchLower = searchTerm.toLowerCase();
-  const streetLower = streetText.toLowerCase();
   
-  // Direct substring match (current behavior)
-  if (streetLower.includes(searchLower)) {
-    return true;
-  }
-  
-  // Split route into individual words/street names
-  const words = streetText.toLowerCase().split(/[,\s]+/).filter(word => word.length > 2);
-  
-  // Check fuzzy match against each word
-  for (const word of words) {
-    const distance = levenshteinDistance(searchLower, word);
-    const maxLength = Math.max(searchLower.length, word.length);
+  // Check each street in the array
+  for (const street of streetArray) {
+    const streetLower = street.toLowerCase();
     
-    // Allow distance based on word length, but cap at threshold
-    const allowedDistance = Math.min(threshold, Math.floor(maxLength * 0.3));
-    
-    if (distance <= allowedDistance) {
+    // Direct substring match
+    if (streetLower.includes(searchLower)) {
       return true;
+    }
+    
+    // Split street name into individual words
+    const words = street.toLowerCase().split(/[,\s]+/).filter(word => word.length > 2);
+    
+    // Check fuzzy match against each word in the street name
+    for (const word of words) {
+      const distance = levenshteinDistance(searchLower, word);
+      const maxLength = Math.max(searchLower.length, word.length);
+      
+      // Allow distance based on word length, but cap at threshold
+      const allowedDistance = Math.min(threshold, Math.floor(maxLength * 0.3));
+      
+      if (distance <= allowedDistance) {
+        return true;
+      }
     }
   }
   

@@ -2,8 +2,8 @@
 
 This doesn't do too much at the minute. Here's the routes available:
 
-* `/parades` - lists all upcoming parades in the North
-* `/parades_by_street_belfast/:street` - List all the upcoming parades by street.
+* `/upcoming-parades` - lists all upcoming parades in the North
+* `/parades-by-street-belfast/:street` - List all the upcoming parades by street.
 
 There's query params for `/parades` available as well.
 

@@ -44,8 +44,8 @@ const rootMessage = `
 
 	<ul>
 		<li><code>/</code> - this message</li>
-		<li><code>/parades</code> - list all parades</li>
-		<li><code>/parades_by_street_belfast/:street</code> - list all parades that go down a given street in Belfast</li>
+		<li><code>/upcoming-parades</code> - list all upcoming parades</li>
+		<li><code>/parades-by-street-belfast/:street</code> - list all parades that go down a given street in Belfast. Uses fuzzy search.</li>
 	</ul>
 	</body>
 </html>
@@ -59,7 +59,7 @@ router.get(
     }),
 );
 
-router.get('/parades', async ({ query }, env) => {
+router.get('/upcoming-parades', async ({ query }, env) => {
   const { location, start, end } = query;
   
   // 10 minutes TTL in seconds
@@ -95,7 +95,7 @@ router.get('/parades', async ({ query }, env) => {
   });
 });
 
-router.get('/parades_by_street_belfast/:street', async ({ params }, env) => {
+router.get('/parades-by-street-belfast/:street', async ({ params }, env) => {
   const street = decodeURIComponent(params.street);
   const parades = await allParades();
 
@@ -125,7 +125,8 @@ router.get('/parades_by_street_belfast/:street', async ({ params }, env) => {
 
   const paradesOnStreet = parsedParadeDetails.filter(
     (parade) =>
-      typeof parade.proposedOutwardRoute === 'string' &&
+      Array.isArray(parade.proposedOutwardRoute) &&
+      parade.proposedOutwardRoute.length > 0 &&
       fuzzyMatchStreet(street, parade.proposedOutwardRoute),
   );
 
