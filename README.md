@@ -1,3 +1,6 @@
+> [!WARNING]
+> Project has been archived and GitHub and moved to https://git.sr.ht/~gary_moore/parades-commission-unofficial-api
+
 # Unofficial Parades Commission API
 
 This doesn't do too much at the minute. Here's the routes available:
